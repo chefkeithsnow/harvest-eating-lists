@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Week 2 — Shopping List | Harvest Eating</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #2D5016;
+    --green-mid: #4A7C2E;
+    --green-soft: #6B9E4A;
+    --green-pale: #EAF2E3;
+    --green-wash: #F5F9F1;
+    --cream: #FEFCF8;
+    --text: #2C2C2C;
+    --text-light: #6B6B6B;
+    --checked: #B0C4A0;
+    --shadow: rgba(45,80,22,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; padding-bottom: 100px; }
+  .header { background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%); padding: 28px 20px 24px; text-align: center; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -40%; left: -20%; width: 140%; height: 180%; background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.06) 0%, transparent 60%); pointer-events: none; }
+  .header-brand { font-family: 'DM Serif Display', serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+  .header-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+  .header-sub { font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 500; }
+  .progress-wrap { padding: 16px 20px 8px; position: sticky; top: 0; background: var(--cream); z-index: 100; border-bottom: 1px solid rgba(74,124,46,0.1); }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 13px; font-weight: 600; color: var(--green-mid); }
+  .progress-count { font-size: 13px; color: var(--text-light); font-weight: 500; }
+  .progress-bar { width: 100%; height: 6px; background: var(--green-pale); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green-mid), var(--green-soft)); border-radius: 3px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+  .filter-wrap { padding: 12px 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .filter-wrap::-webkit-scrollbar { display: none; }
+  .filter-pill { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid var(--green-mid); color: var(--green-mid); background: transparent; margin-right: 8px; cursor: pointer; transition: all 0.2s ease; user-select: none; }
+  .filter-pill.active { background: var(--green-mid); color: #fff; }
+  .filter-pill:active { transform: scale(0.96); }
+  .category { margin: 16px 16px 0; }
+  .category-header { display: flex; align-items: center; padding: 10px 4px; gap: 10px; }
+  .category-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .category-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--green-deep); }
+  .category-count { font-size: 12px; color: var(--text-light); margin-left: auto; font-weight: 500; }
+  .items-list { background: #fff; border-radius: 14px; box-shadow: 0 1px 4px var(--shadow), 0 0 0 1px rgba(74,124,46,0.06); overflow: hidden; }
+  .item { display: flex; align-items: center; padding: 14px 16px; gap: 14px; border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer; transition: background 0.15s ease; user-select: none; }
+  .item:last-child { border-bottom: none; }
+  .item:active { background: var(--green-wash); }
+  .item.checked { background: rgba(234,242,227,0.4); }
+  .item.checked .item-text { text-decoration: line-through; color: var(--checked); }
+  .checkbox { width: 26px; height: 26px; border-radius: 8px; border: 2px solid #ccc; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+  .item.checked .checkbox { background: var(--green-mid); border-color: var(--green-mid); }
+  .checkbox svg { width: 14px; height: 14px; opacity: 0; transform: scale(0.5); transition: all 0.2s ease; }
+  .item.checked .checkbox svg { opacity: 1; transform: scale(1); }
+  .item-text { font-size: 15px; line-height: 1.4; color: var(--text); transition: all 0.25s ease; flex: 1; }
+  .item-meals { display: flex; gap: 4px; flex-shrink: 0; }
+  .meal-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.7; }
+  .dot-1 { background: #D4785C; } .dot-2 { background: #D4A843; } .dot-3 { background: #5C9E5C; } .dot-4 { background: #7B6DAD; } .dot-5 { background: #C46B8A; }
+  .clear-wrap { padding: 24px 20px; text-align: center; }
+  .clear-btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-light); background: none; border: 1.5px solid #ddd; border-radius: 12px; padding: 12px 28px; cursor: pointer; transition: all 0.2s ease; }
+  .clear-btn:active { transform: scale(0.97); background: #f5f5f5; }
+  .legend { padding: 8px 20px 16px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-light); font-weight: 500; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .item.hidden { display: none; }
+  .done-banner { display: none; text-align: center; padding: 32px 20px; }
+  .done-banner.show { display: block; }
+  .done-emoji { font-size: 48px; margin-bottom: 8px; }
+  .done-text { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--green-deep); }
+  .done-sub { font-size: 14px; color: var(--text-light); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-brand">Harvest Eating</div>
+  <div class="header-title">Winter Meal Plan — Week 2</div>
+  <div class="header-sub">Interactive Shopping List — 5 Meals</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span class="progress-label">Shopping Progress</span>
+    <span class="progress-count" id="progressCount">0 / 0 items</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+<div class="filter-wrap">
+  <button class="filter-pill active" data-meal="all">All Items</button>
+  <button class="filter-pill" data-meal="1">Beef Chili</button>
+  <button class="filter-pill" data-meal="2">Salmon</button>
+  <button class="filter-pill" data-meal="3">Pork Stir-Fry</button>
+  <button class="filter-pill" data-meal="4">Wedding Soup</button>
+  <button class="filter-pill" data-meal="5">Cod Gratin</button>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot dot-1"></div>Beef Chili</div>
+  <div class="legend-item"><div class="legend-dot dot-2"></div>Salmon</div>
+  <div class="legend-item"><div class="legend-dot dot-3"></div>Pork Stir-Fry</div>
+  <div class="legend-item"><div class="legend-dot dot-4"></div>Wedding Soup</div>
+  <div class="legend-item"><div class="legend-dot dot-5"></div>Cod Gratin</div>
+</div>
+<div id="listContainer"></div>
+<div class="done-banner" id="doneBanner">
+  <div class="done-emoji">🎉</div>
+  <div class="done-text">All done!</div>
+  <div class="done-sub">You're ready to cook this week.</div>
+</div>
+<div class="clear-wrap"><button class="clear-btn" id="clearBtn">Reset Checklist</button></div>
+<script>
+const DATA = [
+  { category: "Meat & Seafood", icon: "🥩", iconBg: "#FDEEE8", items: [
+    { text: "2 lbs grass-fed beef chuck, cubed", meals: [1] },
+    { text: "1 lb grass-fed ground beef", meals: [4] },
+    { text: "4 wild-caught salmon fillets (6 oz each)", meals: [2] },
+    { text: "1.5 lbs organic boneless pork loin", meals: [3] },
+    { text: "1.5 lbs wild-caught cod fillets", meals: [5] }
+  ]},
+  { category: "Produce", icon: "🥕", iconBg: "#EAF2E3", items: [
+    { text: "3 organic yellow onions", meals: [1,4] },
+    { text: "1 head organic garlic (10+ cloves)", meals: [1,2,3,4] },
+    { text: "4 organic carrots", meals: [3,4] },
+    { text: "2 stalks organic celery", meals: [4] },
+    { text: "1 organic poblano pepper", meals: [1] },
+    { text: "1 organic red bell pepper", meals: [1] },
+    { text: "2 medium organic sweet potatoes", meals: [1] },
+    { text: "1 bunch organic broccolini", meals: [2] },
+    { text: "½ head organic green cabbage", meals: [3] },
+    { text: "1 bunch organic green onions", meals: [1,3] },
+    { text: "1.5 lbs organic Yukon Gold potatoes", meals: [5] },
+    { text: "4 cups organic baby spinach", meals: [4] },
+    { text: "Organic fresh ginger (small knob)", meals: [3] },
+    { text: "3 organic lemons", meals: [2,4,5] },
+    { text: "1 organic lime", meals: [3] },
+    { text: "Fresh organic thyme (1 bunch)", meals: [5] },
+    { text: "Fresh organic parsley (1 bunch)", meals: [5] },
+    { text: "Organic salad greens (for cod gratin side)", meals: [5] }
+  ]},
+  { category: "Pantry & Dry Goods", icon: "🫙", iconBg: "#FFF5E6", items: [
+    { text: "1 can (28 oz) organic crushed tomatoes", meals: [1] },
+    { text: "Organic tomato paste (small tube or can)", meals: [1] },
+    { text: "Organic breadcrumbs (½ cup total)", meals: [4,5] },
+    { text: "1 cup organic orzo pasta", meals: [4] },
+    { text: "Organic jasmine rice", meals: [3] },
+    { text: "Coconut aminos (check stock)", meals: [3,4] },
+    { text: "Capers (small jar)", meals: [2] },
+    { text: "Chili powder", meals: [1] },
+    { text: "Ground cumin", meals: [1] },
+    { text: "Smoked paprika", meals: [1] },
+    { text: "Toasted sesame oil (small bottle)", meals: [3] },
+    { text: "Toasted sesame seeds", meals: [3] },
+    { text: "Apple cider vinegar", meals: [1] },
+    { text: "Dijon mustard", meals: [5] },
+    { text: "Extra virgin olive oil (check stock)", meals: [1,2,3,4,5] },
+    { text: "Tallow (for chili sear, or use EVOO)", meals: [1] },
+    { text: "Kosher salt & black pepper", meals: [1,2,3,4,5] }
+  ]},
+  { category: "Dairy & Cheese (organic)", icon: "🧀", iconBg: "#FFF9E8", items: [
+    { text: "Organic grass-fed unsalted butter (½ lb)", meals: [2,5] },
+    { text: "Organic grated Parmesan (small wedge)", meals: [4] },
+    { text: "Organic sour cream (small container)", meals: [1] },
+    { text: "Organic heavy cream (½ cup)", meals: [5] },
+    { text: "1 organic egg", meals: [4] }
+  ]},
+  { category: "Liquids & Stock", icon: "🍷", iconBg: "#F5EEF8", items: [
+    { text: "1 cup organic beef stock", meals: [1] },
+    { text: "8 cups organic chicken stock", meals: [4] }
+  ]}
+];
+let checkedState = {};
+let activeFilter = 'all';
+try { checkedState = JSON.parse(localStorage.getItem('he-winter-wk2') || '{}'); } catch(e) {}
+function saveState() { localStorage.setItem('he-winter-wk2', JSON.stringify(checkedState)); }
+function getItemKey(c, i) { return `${c}-${i}`; }
+function getMealDots(meals) { return meals.map(m => `<div class="meal-dot dot-${m}"></div>`).join(''); }
+function renderList() {
+  const container = document.getElementById('listContainer');
+  container.innerHTML = '';
+  DATA.forEach((cat, catIdx) => {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'category';
+    const visibleItems = cat.items.filter(item => activeFilter === 'all' || item.meals.includes(parseInt(activeFilter)));
+    if (visibleItems.length === 0) return;
+    const checkedInCat = visibleItems.filter(item => { const origIdx = cat.items.indexOf(item); return checkedState[getItemKey(catIdx, origIdx)]; }).length;
+    catDiv.innerHTML = `
+      <div class="category-header">
+        <div class="category-icon" style="background:${cat.iconBg}">${cat.icon}</div>
+        <div class="category-name">${cat.category}</div>
+        <div class="category-count">${checkedInCat}/${visibleItems.length}</div>
+      </div>
+      <div class="items-list">
+        ${cat.items.map((item, itemIdx) => {
+          const key = getItemKey(catIdx, itemIdx);
+          const isChecked = checkedState[key];
+          const isVisible = activeFilter === 'all' || item.meals.includes(parseInt(activeFilter));
+          return `<div class="item ${isChecked ? 'checked' : ''} ${!isVisible ? 'hidden' : ''}" data-key="${key}" onclick="toggleItem('${key}')">
+              <div class="checkbox"><svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7 5.5 10.5 11.5 3.5"/></svg></div>
+              <div class="item-text">${item.text}</div>
+              <div class="item-meals">${getMealDots(item.meals)}</div>
+            </div>`;
+        }).join('')}
+      </div>`;
+    container.appendChild(catDiv);
+  });
+  updateProgress();
+}
+function toggleItem(key) { checkedState[key] = !checkedState[key]; saveState(); renderList(); }
+function updateProgress() {
+  let total = 0, checked = 0;
+  DATA.forEach((cat, catIdx) => { cat.items.forEach((item, itemIdx) => {
+    if (activeFilter !== 'all' && !item.meals.includes(parseInt(activeFilter))) return;
+    total++; if (checkedState[getItemKey(catIdx, itemIdx)]) checked++;
+  }); });
+  document.getElementById('progressCount').textContent = `${checked} / ${total} items`;
+  document.getElementById('progressFill').style.width = (total === 0 ? 0 : (checked / total) * 100) + '%';
+  const banner = document.getElementById('doneBanner');
+  checked === total && total > 0 ? banner.classList.add('show') : banner.classList.remove('show');
+}
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeFilter = pill.dataset.meal;
+    renderList();
+  });
+});
+document.getElementById('clearBtn').addEventListener('click', () => { if (confirm('Reset all checked items?')) { checkedState = {}; saveState(); renderList(); } });
+renderList();
+</script>
+</body>
+</html>
