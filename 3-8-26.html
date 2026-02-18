@@ -15,6 +15,19 @@
   .header-brand{font-family:'DM Serif Display',serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:6px}
   .header-title{font-family:'DM Serif Display',serif;font-size:26px;color:#fff;line-height:1.2;margin-bottom:4px}
   .header-sub{font-size:13px;color:rgba(255,255,255,0.7);font-weight:500}
+  .scaler-wrap{background:var(--green-deep);padding:12px 20px 16px;border-top:1px solid rgba(255,255,255,0.1)}
+  .scaler-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:10px;font-weight:600}
+  .scaler-controls{display:flex;align-items:center;gap:0;background:rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;width:fit-content;margin:0 auto}
+  .scaler-btn{width:44px;height:44px;border:none;background:transparent;color:#fff;font-size:22px;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;flex-shrink:0}
+  .scaler-btn:active{background:rgba(255,255,255,0.2)}
+  .scaler-display{min-width:90px;text-align:center;color:#fff;padding:0 4px}
+  .scaler-servings{font-family:'DM Serif Display',serif;font-size:24px;line-height:1}
+  .scaler-unit{font-size:11px;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:1px;margin-top:2px}
+  .scaler-presets{display:flex;gap:8px;justify-content:center;margin-top:10px}
+  .preset-btn{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+  .preset-btn.active{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.6);color:#fff}
+  .preset-btn:active{transform:scale(0.95)}
+  .scaler-note{text-align:center;font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px}
   .progress-wrap{padding:16px 20px 8px;position:sticky;top:0;background:var(--cream);z-index:100;border-bottom:1px solid rgba(74,124,46,0.1)}
   .progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
   .progress-label{font-size:13px;font-weight:600;color:var(--green-mid)}
@@ -37,11 +50,15 @@
   .item:active{background:var(--green-wash)}
   .item.checked{background:rgba(234,242,227,0.4)}
   .item.checked .item-text{text-decoration:line-through;color:var(--checked)}
+  .item.checked .item-qty{text-decoration:line-through;color:var(--checked)}
   .checkbox{width:26px;height:26px;border-radius:8px;border:2px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
   .item.checked .checkbox{background:var(--green-mid);border-color:var(--green-mid)}
   .checkbox svg{width:14px;height:14px;opacity:0;transform:scale(0.5);transition:all 0.2s ease}
   .item.checked .checkbox svg{opacity:1;transform:scale(1)}
-  .item-text{font-size:15px;line-height:1.4;color:var(--text);transition:all 0.25s ease;flex:1}
+  .item-body{flex:1;min-width:0}
+  .item-qty{font-size:12px;font-weight:600;color:var(--green-mid);margin-bottom:2px;transition:all 0.25s ease}
+  .item-qty.scaled{color:var(--green-soft)}
+  .item-text{font-size:15px;line-height:1.4;color:var(--text);transition:all 0.25s ease}
   .item-meals{display:flex;gap:4px;flex-shrink:0}
   .meal-dot{width:8px;height:8px;border-radius:50%;opacity:0.7}
   .dot-1{background:#D4785C}.dot-2{background:#D4A843}.dot-3{background:#5C9E5C}.dot-4{background:#7B6DAD}.dot-5{background:#C46B8A}
@@ -64,7 +81,26 @@
   <div class="header-brand">Harvest Eating</div>
   <div class="header-title">Meal Plan — March 8, 2026</div>
   <div class="header-sub">Interactive Shopping List — 5 Meals</div>
+  <div class="scaler-wrap">
+    <div class="scaler-label">Servings per meal</div>
+    <div class="scaler-controls">
+      <button class="scaler-btn" id="scalerDown">−</button>
+      <div class="scaler-display">
+        <div class="scaler-servings" id="scalerNum">4</div>
+        <div class="scaler-unit">SERVINGS</div>
+      </div>
+      <button class="scaler-btn" id="scalerUp">+</button>
+    </div>
+    <div class="scaler-presets">
+      <button class="preset-btn" data-s="2">2</button>
+      <button class="preset-btn active" data-s="4">4</button>
+      <button class="preset-btn" data-s="6">6</button>
+      <button class="preset-btn" data-s="8">8</button>
+    </div>
+    <div class="scaler-note">Quantities update automatically below</div>
+  </div>
 </div>
+
 <div class="progress-wrap">
   <div class="progress-info">
     <span class="progress-label">Shopping Progress</span>
@@ -72,21 +108,24 @@
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 </div>
+
 <div class="filter-wrap">
   <button class="filter-pill active" data-meal="all">All Items</button>
-  <button class="filter-pill" data-meal="1">Chop Salad</button>
-  <button class="filter-pill" data-meal="2">Orzo</button>
+  <button class="filter-pill" data-meal="1">Chopped Salad</button>
+  <button class="filter-pill" data-meal="2">Chicken &amp; Orzo</button>
   <button class="filter-pill" data-meal="3">Tortilla Soup</button>
-  <button class="filter-pill" data-meal="4">Curry</button>
+  <button class="filter-pill" data-meal="4">Coconut Curry</button>
   <button class="filter-pill" data-meal="5">Cassoulet</button>
 </div>
+
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot dot-1"></div>Chop Salad</div>
-  <div class="legend-item"><div class="legend-dot dot-2"></div>Orzo</div>
+  <div class="legend-item"><div class="legend-dot dot-1"></div>Chopped Salad</div>
+  <div class="legend-item"><div class="legend-dot dot-2"></div>Chicken &amp; Orzo</div>
   <div class="legend-item"><div class="legend-dot dot-3"></div>Tortilla Soup</div>
-  <div class="legend-item"><div class="legend-dot dot-4"></div>Curry</div>
+  <div class="legend-item"><div class="legend-dot dot-4"></div>Coconut Curry</div>
   <div class="legend-item"><div class="legend-dot dot-5"></div>Cassoulet</div>
 </div>
+
 <div id="listContainer"></div>
 <div class="done-banner" id="doneBanner">
   <div class="done-emoji">🎉</div>
@@ -94,119 +133,189 @@
   <div class="done-sub">You're ready to cook this week.</div>
 </div>
 <div class="clear-wrap"><button class="clear-btn" id="clearBtn">Reset Checklist</button></div>
+
 <script>
+const STORAGE_KEY = 'he-0308';
+const BASE_SERVINGS = 4;
+
 const DATA = [
-  { category: "Poultry", icon: "🍗", iconBg: "#FDEEE8", items: [
-    { text: "1.5 lbs organic boneless skinless chicken thighs (salad)", meals: [1] },
-    { text: "1.5 lbs organic boneless skinless chicken thighs (orzo)", meals: [2] },
-    { text: "2 lbs bone-in, skin-on organic chicken thighs (soup)", meals: [3] },
-    { text: "1.5 lbs organic boneless skinless chicken thighs (curry)", meals: [4] },
-    { text: "4 whole organic chicken legs (cassoulet)", meals: [5] }
+  { category: "Meat & Poultry", icon: "🥩", iconBg: "#FDEEE8", items: [
+    { text: "Organic boneless skinless chicken thighs (for salad)", meals: [1], qty: { base: 1.5, unit: "lbs", scalable: true } },
+    { text: "Organic boneless skinless chicken thighs (for orzo)", meals: [2], qty: { base: 1.5, unit: "lbs", scalable: true } },
+    { text: "Bone-in, skin-on organic chicken thighs (for soup)", meals: [3], qty: { base: 2, unit: "lbs", scalable: true } },
+    { text: "Organic boneless skinless chicken thighs (for curry)", meals: [4], qty: { base: 1.5, unit: "lbs", scalable: true } },
+    { text: "Whole organic chicken legs, thigh + drumstick (for cassoulet)", meals: [5], qty: { base: 4, unit: "", scalable: true, countable: true } }
   ]},
   { category: "Produce", icon: "🥕", iconBg: "#EAF2E3", items: [
-    { text: "4 large organic yellow onions", meals: [2,3,4,5] },
-    { text: "½ organic red onion", meals: [1] },
-    { text: "2 heads organic garlic", meals: [1,2,3,4,5] },
-    { text: "3 organic carrots", meals: [5] },
-    { text: "2 medium organic sweet potatoes", meals: [4] },
-    { text: "2 heads organic romaine lettuce", meals: [1] },
-    { text: "1 organic English cucumber", meals: [1] },
-    { text: "1 pint organic cherry tomatoes", meals: [1] },
-    { text: "1 organic poblano pepper", meals: [3] },
-    { text: "4 cups organic baby spinach", meals: [2] },
-    { text: "2 cups organic lacinato kale", meals: [4] },
-    { text: "1 organic avocado", meals: [3] },
-    { text: "Organic fresh ginger (1 knob)", meals: [4] },
-    { text: "4 organic lemons", meals: [1,2] },
-    { text: "3 organic limes", meals: [3,4] },
-    { text: "Fresh organic cilantro (1 bunch)", meals: [3,4] },
-    { text: "Fresh organic thyme (1 bunch)", meals: [5] }
+    { text: "Heads organic romaine lettuce, chopped", meals: [1], qty: { base: 2, unit: "", scalable: true, countable: true } },
+    { text: "Organic English cucumber, diced", meals: [1], qty: { base: 1, unit: "", scalable: true, countable: true } },
+    { text: "Organic cherry tomatoes, halved", meals: [1], qty: { base: 1, unit: "pint", scalable: true } },
+    { text: "Organic red onion, thinly sliced", meals: [1], qty: { base: 0.5, unit: "", scalable: true } },
+    { text: "Large organic yellow onions", meals: [2,3,4,5], qty: { base: 4, unit: "", scalable: true, countable: true } },
+    { text: "Organic garlic", meals: [1,2,3,4,5], qty: { base: 2, unit: "heads", scalable: true, countable: true } },
+    { text: "Organic poblano pepper", meals: [3], qty: { base: 1, unit: "", scalable: true, countable: true } },
+    { text: "Organic limes", meals: [3,4], qty: { base: 3, unit: "", scalable: true, countable: true } },
+    { text: "Organic lemons", meals: [1,2], qty: { base: 2, unit: "", scalable: true, countable: true } },
+    { text: "Organic avocado", meals: [3], qty: { base: 1, unit: "", scalable: true, countable: true } },
+    { text: "Medium organic sweet potatoes, peeled and cubed", meals: [4], qty: { base: 2, unit: "", scalable: true, countable: true } },
+    { text: "Organic carrots, diced", meals: [5], qty: { base: 3, unit: "", scalable: true, countable: true } },
+    { text: "Organic baby spinach", meals: [2], qty: { base: 4, unit: "cups", scalable: true } },
+    { text: "Organic lacinato kale, stems removed", meals: [4], qty: { base: 2, unit: "cups", scalable: true } },
+    { text: "Organic fresh ginger", meals: [4], qty: { base: 1, unit: "knob", scalable: false, label: "1 knob" } },
+    { text: "Fresh organic thyme", meals: [5], qty: { base: 1, unit: "bunch", scalable: false, label: "1 bunch" } },
+    { text: "Fresh organic cilantro", meals: [3,4], qty: { base: 1, unit: "bunch", scalable: false, label: "1 bunch" } }
   ]},
   { category: "Pantry & Dry Goods", icon: "🫙", iconBg: "#FFF5E6", items: [
-    { text: "1 can (15 oz) organic chickpeas", meals: [1] },
-    { text: "2 cans (15 oz each) organic cannellini beans", meals: [5] },
-    { text: "1 can (14 oz) organic fire-roasted diced tomatoes", meals: [3] },
-    { text: "1 can (13.5 oz) full-fat organic coconut milk", meals: [4] },
-    { text: "1.5 cups organic orzo pasta", meals: [2] },
-    { text: "Organic jasmine rice", meals: [4] },
-    { text: "2 organic pita rounds", meals: [1] },
-    { text: "4 organic corn tortillas", meals: [3] },
-    { text: "½ cup organic breadcrumbs", meals: [5] },
-    { text: "⅓ cup raw organic almonds", meals: [1] },
-    { text: "Dijon mustard", meals: [1,5] },
-    { text: "Ground cumin", meals: [3] },
-    { text: "Chili powder", meals: [3] },
-    { text: "Smoked paprika", meals: [1,3] },
-    { text: "Garam masala", meals: [4] },
-    { text: "Ground turmeric", meals: [4] },
-    { text: "Dried oregano", meals: [1,2] },
-    { text: "Red pepper flakes", meals: [2] },
-    { text: "Extra virgin olive oil (check stock)", meals: [1,2,3,4,5] },
-    { text: "Kosher salt & black pepper", meals: [1,2,3,4,5] }
+    { text: "Organic chickpeas, drained and rinsed", meals: [1], qty: { base: 1, unit: "can (15 oz)", scalable: true, countable: true } },
+    { text: "Organic cannellini beans, drained and rinsed", meals: [5], qty: { base: 2, unit: "cans (15 oz)", scalable: true, countable: true } },
+    { text: "Organic fire-roasted diced tomatoes", meals: [3], qty: { base: 1, unit: "can (14 oz)", scalable: true, countable: true } },
+    { text: "Full-fat organic coconut milk", meals: [4], qty: { base: 1, unit: "can (13.5 oz)", scalable: true, countable: true } },
+    { text: "Organic orzo pasta", meals: [2], qty: { base: 1.5, unit: "cups", scalable: true } },
+    { text: "Organic corn tortillas (for strips)", meals: [3], qty: { base: 4, unit: "", scalable: true, countable: true } },
+    { text: "Organic pita rounds, torn into croutons", meals: [1], qty: { base: 2, unit: "", scalable: true, countable: true } },
+    { text: "Raw organic almonds, roughly chopped", meals: [1], qty: { base: 0.33, unit: "cup", scalable: true } },
+    { text: "Organic breadcrumbs", meals: [5], qty: { base: 0.5, unit: "cup", scalable: true } },
+    { text: "Organic jasmine rice", meals: [4], qty: { base: 1.5, unit: "cups", scalable: true } },
+    { text: "Dijon mustard", meals: [1,5], qty: { base: 1, unit: "jar", scalable: false, label: "check pantry" } },
+    { text: "Smoked paprika", meals: [1,3], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Ground cumin", meals: [3,4], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Chili powder", meals: [3], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Garam masala", meals: [4], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Ground turmeric", meals: [4], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Dried oregano", meals: [1,2], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Red pepper flakes", meals: [2], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Extra virgin olive oil", meals: [1,2,3,4,5], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Kosher salt & black pepper", meals: [1,2,3,4,5], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } },
+    { text: "Bay leaves", meals: [5], qty: { base: 1, unit: "", scalable: false, label: "check pantry" } }
   ]},
   { category: "Dairy & Cheese (organic)", icon: "🧀", iconBg: "#FFF9E8", items: [
-    { text: "¾ cup shaved organic Parmesan", meals: [1] },
-    { text: "½ cup organic crumbled feta", meals: [2] },
-    { text: "Organic sour cream (small container)", meals: [3] },
-    { text: "1 tbsp organic grass-fed butter", meals: [5] }
+    { text: "Shaved organic Parmesan", meals: [1], qty: { base: 0.75, unit: "cup", scalable: true } },
+    { text: "Organic crumbled feta", meals: [2], qty: { base: 0.5, unit: "cup", scalable: true } },
+    { text: "Organic sour cream", meals: [3], qty: { base: 1, unit: "cup", scalable: true } },
+    { text: "Organic grass-fed butter", meals: [5], qty: { base: 1, unit: "tbsp", scalable: true } }
   ]},
-  { category: "Liquids", icon: "🍷", iconBg: "#F5EEF8", items: [
-    { text: "½ cup dry white wine", meals: [5] },
-    { text: "11 cups organic chicken stock (total)", meals: [2,3,4,5] }
+  { category: "Wine & Liquids", icon: "🍷", iconBg: "#F5EEF8", items: [
+    { text: "Organic chicken stock", meals: [2,3,4,5], qty: { base: 8, unit: "cups", scalable: true } },
+    { text: "Dry white wine", meals: [5], qty: { base: 0.5, unit: "cup", scalable: true } }
   ]}
 ];
-let checkedState={};let activeFilter='all';
-try{checkedState=JSON.parse(localStorage.getItem('he-mar8')||'{}');}catch(e){}
-function saveState(){localStorage.setItem('he-mar8',JSON.stringify(checkedState));}
-function getItemKey(c,i){return `${c}-${i}`;}
-function getMealDots(meals){return meals.map(m=>`<div class="meal-dot dot-${m}"></div>`).join('');}
-function renderList(){
-  const container=document.getElementById('listContainer');container.innerHTML='';
-  DATA.forEach((cat,catIdx)=>{
-    const catDiv=document.createElement('div');catDiv.className='category';
-    const visibleItems=cat.items.filter(item=>activeFilter==='all'||item.meals.includes(parseInt(activeFilter)));
-    if(visibleItems.length===0)return;
-    const checkedInCat=visibleItems.filter(item=>{const origIdx=cat.items.indexOf(item);return checkedState[getItemKey(catIdx,origIdx)];}).length;
-    catDiv.innerHTML=`
+
+let checkedState = {};
+let activeFilter = 'all';
+let servings = 4;
+
+try { checkedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) {}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState)); }
+function getItemKey(c, i) { return `${c}-${i}`; }
+function getMealDots(meals) { return meals.map(m => `<div class="meal-dot dot-${m}"></div>`).join(''); }
+
+function formatQty(qty) {
+  if (!qty.scalable) return qty.label || '';
+  const ratio = servings / BASE_SERVINGS;
+  let scaled = qty.base * ratio;
+  let display;
+  if (qty.countable) {
+    scaled = Math.ceil(scaled);
+    display = `${scaled}`;
+    if (qty.unit) display += ` ${qty.unit}`;
+  } else {
+    if (scaled === Math.floor(scaled)) {
+      display = `${scaled}`;
+    } else {
+      const whole = Math.floor(scaled);
+      const frac = scaled - whole;
+      const fracs = { 0.25:'¼', 0.5:'½', 0.75:'¾', 0.33:'⅓', 0.67:'⅔' };
+      const fracStr = fracs[Math.round(frac * 100) / 100] || frac.toFixed(1).replace('0.', '.');
+      display = whole > 0 ? `${whole} ${fracStr}` : fracStr;
+    }
+    if (qty.unit) display += ` ${qty.unit}`;
+  }
+  return display;
+}
+
+function renderList() {
+  const container = document.getElementById('listContainer');
+  container.innerHTML = '';
+  DATA.forEach((cat, catIdx) => {
+    const visibleItems = cat.items.filter(item => activeFilter === 'all' || item.meals.includes(parseInt(activeFilter)));
+    if (visibleItems.length === 0) return;
+    const catDiv = document.createElement('div');
+    catDiv.className = 'category';
+    const checkedInCat = visibleItems.filter(item => {
+      const origIdx = cat.items.indexOf(item);
+      return checkedState[getItemKey(catIdx, origIdx)];
+    }).length;
+    catDiv.innerHTML = `
       <div class="category-header">
         <div class="category-icon" style="background:${cat.iconBg}">${cat.icon}</div>
         <div class="category-name">${cat.category}</div>
         <div class="category-count">${checkedInCat}/${visibleItems.length}</div>
       </div>
       <div class="items-list">
-        ${cat.items.map((item,itemIdx)=>{
-          const key=getItemKey(catIdx,itemIdx);const isChecked=checkedState[key];
-          const isVisible=activeFilter==='all'||item.meals.includes(parseInt(activeFilter));
-          return `<div class="item ${isChecked?'checked':''} ${!isVisible?'hidden':''}" data-key="${key}" onclick="toggleItem('${key}')">
-              <div class="checkbox"><svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7 5.5 10.5 11.5 3.5"/></svg></div>
+        ${cat.items.map((item, itemIdx) => {
+          const key = getItemKey(catIdx, itemIdx);
+          const isChecked = checkedState[key];
+          const isVisible = activeFilter === 'all' || item.meals.includes(parseInt(activeFilter));
+          const qtyText = item.qty ? formatQty(item.qty) : '';
+          const isScaled = item.qty && item.qty.scalable && servings !== BASE_SERVINGS;
+          return `<div class="item ${isChecked ? 'checked' : ''} ${!isVisible ? 'hidden' : ''}" data-key="${key}" onclick="toggleItem('${key}')">
+            <div class="checkbox"><svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7 5.5 10.5 11.5 3.5"/></svg></div>
+            <div class="item-body">
+              ${qtyText ? `<div class="item-qty${isScaled ? ' scaled' : ''}">${qtyText}</div>` : ''}
               <div class="item-text">${item.text}</div>
-              <div class="item-meals">${getMealDots(item.meals)}</div>
-            </div>`;
+            </div>
+            <div class="item-meals">${getMealDots(item.meals)}</div>
+          </div>`;
         }).join('')}
       </div>`;
     container.appendChild(catDiv);
   });
   updateProgress();
 }
-function toggleItem(key){checkedState[key]=!checkedState[key];saveState();renderList();}
-function updateProgress(){
-  let total=0,checked=0;
-  DATA.forEach((cat,catIdx)=>{cat.items.forEach((item,itemIdx)=>{
-    if(activeFilter!=='all'&&!item.meals.includes(parseInt(activeFilter)))return;
-    total++;if(checkedState[getItemKey(catIdx,itemIdx)])checked++;
-  });});
-  document.getElementById('progressCount').textContent=`${checked} / ${total} items`;
-  document.getElementById('progressFill').style.width=(total===0?0:(checked/total)*100)+'%';
-  const banner=document.getElementById('doneBanner');
-  checked===total&&total>0?banner.classList.add('show'):banner.classList.remove('show');
+
+function toggleItem(key) { checkedState[key] = !checkedState[key]; saveState(); renderList(); }
+
+function updateProgress() {
+  let total = 0, checked = 0;
+  DATA.forEach((cat, catIdx) => {
+    cat.items.forEach((item, itemIdx) => {
+      if (activeFilter !== 'all' && !item.meals.includes(parseInt(activeFilter))) return;
+      total++;
+      if (checkedState[getItemKey(catIdx, itemIdx)]) checked++;
+    });
+  });
+  document.getElementById('progressCount').textContent = `${checked} / ${total} items`;
+  document.getElementById('progressFill').style.width = (total === 0 ? 0 : (checked / total) * 100) + '%';
+  const banner = document.getElementById('doneBanner');
+  checked === total && total > 0 ? banner.classList.add('show') : banner.classList.remove('show');
 }
-document.querySelectorAll('.filter-pill').forEach(pill=>{
-  pill.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
-    pill.classList.add('active');activeFilter=pill.dataset.meal;renderList();
+
+function setServings(n) {
+  servings = Math.max(1, Math.min(12, n));
+  document.getElementById('scalerNum').textContent = servings;
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.s) === servings);
+  });
+  renderList();
+}
+
+document.getElementById('scalerUp').addEventListener('click', () => setServings(servings + 1));
+document.getElementById('scalerDown').addEventListener('click', () => setServings(servings - 1));
+document.querySelectorAll('.preset-btn').forEach(b => {
+  b.addEventListener('click', () => setServings(parseInt(b.dataset.s)));
+});
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeFilter = pill.dataset.meal;
+    renderList();
   });
 });
-document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Reset all checked items?')){checkedState={};saveState();renderList();}});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (confirm('Reset all checked items?')) { checkedState = {}; saveState(); renderList(); }
+});
+
 renderList();
 </script>
 </body>
