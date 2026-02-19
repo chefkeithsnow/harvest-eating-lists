@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>March 1 — Shopping List | Harvest Eating</title>
+<title>Feb 22 — Shopping List | Harvest Eating</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -44,7 +44,7 @@
   .item-text{font-size:15px;line-height:1.4;color:var(--text);transition:all 0.25s ease;flex:1}
   .item-meals{display:flex;gap:4px;flex-shrink:0}
   .meal-dot{width:8px;height:8px;border-radius:50%;opacity:0.7}
-  .dot-1{background:#D4785C}.dot-2{background:#D4A843}.dot-3{background:#5C9E5C}.dot-4{background:#7B6DAD}.dot-5{background:#C46B8A}
+  .dot-1{background:#D4785C}.dot-2{background:#D4A843}.dot-3{background:#5C9E5C}.dot-4{background:#7B6DAD}.dot-5{background:#C46B8A}.dot-6{background:#4A9BAD}
   .clear-wrap{padding:24px 20px;text-align:center}
   .clear-btn{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--text-light);background:none;border:1.5px solid #ddd;border-radius:12px;padding:12px 28px;cursor:pointer;transition:all 0.2s ease}
   .clear-btn:active{transform:scale(0.97);background:#f5f5f5}
@@ -62,8 +62,8 @@
 <body>
 <div class="header">
   <div class="header-brand">Harvest Eating</div>
-  <div class="header-title">Meal Plan — March 1, 2026</div>
-  <div class="header-sub">Interactive Shopping List — 5 Meals</div>
+  <div class="header-title">Meal Plan — February 22, 2026</div>
+  <div class="header-sub">Interactive Shopping List — 6 Meals</div>
 </div>
 <div class="progress-wrap">
   <div class="progress-info">
@@ -74,18 +74,20 @@
 </div>
 <div class="filter-wrap">
   <button class="filter-pill active" data-meal="all">All Items</button>
-  <button class="filter-pill" data-meal="1">Tagine</button>
-  <button class="filter-pill" data-meal="2">Gyudon</button>
-  <button class="filter-pill" data-meal="3">Chicken & Leeks</button>
-  <button class="filter-pill" data-meal="4">Cauli Stew</button>
-  <button class="filter-pill" data-meal="5">Braciole</button>
+  <button class="filter-pill" data-meal="1">Chicken &amp; Fennel</button>
+  <button class="filter-pill" data-meal="2">Halibut</button>
+  <button class="filter-pill" data-meal="3">Beef Soup</button>
+  <button class="filter-pill" data-meal="4">Stir-Fry</button>
+  <button class="filter-pill" data-meal="5">Chuck Roast</button>
+  <button class="filter-pill" data-meal="6">Salmon</button>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot dot-1"></div>Tagine</div>
-  <div class="legend-item"><div class="legend-dot dot-2"></div>Gyudon</div>
-  <div class="legend-item"><div class="legend-dot dot-3"></div>Chicken & Leeks</div>
-  <div class="legend-item"><div class="legend-dot dot-4"></div>Cauli Stew</div>
-  <div class="legend-item"><div class="legend-dot dot-5"></div>Braciole</div>
+  <div class="legend-item"><div class="legend-dot dot-1"></div>Chicken &amp; Fennel</div>
+  <div class="legend-item"><div class="legend-dot dot-2"></div>Halibut</div>
+  <div class="legend-item"><div class="legend-dot dot-3"></div>Beef Soup</div>
+  <div class="legend-item"><div class="legend-dot dot-4"></div>Stir-Fry</div>
+  <div class="legend-item"><div class="legend-dot dot-5"></div>Chuck Roast</div>
+  <div class="legend-item"><div class="legend-dot dot-6"></div>Salmon</div>
 </div>
 <div id="listContainer"></div>
 <div class="done-banner" id="doneBanner">
@@ -96,73 +98,63 @@
 <div class="clear-wrap"><button class="clear-btn" id="clearBtn">Reset Checklist</button></div>
 <script>
 const DATA = [
-  { category: "Meat & Poultry", icon: "🥩", iconBg: "#FDEEE8", items: [
-    { text: "3 lbs bone-in, skin-on organic chicken thighs & drumsticks", meals: [1] },
-    { text: "4 whole organic chicken legs (thigh + drumstick)", meals: [3] },
-    { text: "1.5 lbs grass-fed beef sirloin or ribeye", meals: [2] },
-    { text: "2 lbs grass-fed beef top round (ask butcher for ¼\" slices)", meals: [5] }
+  { category: "Meat & Fish", icon: "🥩", iconBg: "#FDEEE8", items: [
+    { text: "8 bone-in, skin-on organic chicken thighs", meals: [1] },
+    { text: "4 wild-caught halibut fillets (6 oz each)", meals: [2] },
+    { text: "1.5 lbs grass-fed beef chuck, cut into ¾-inch cubes", meals: [3] },
+    { text: "1.5 lbs organic boneless skinless chicken thighs", meals: [4] },
+    { text: "2.5 lbs grass-fed beef chuck roast", meals: [5] },
+    { text: "4 wild-caught salmon fillets (6 oz each)", meals: [6] }
   ]},
   { category: "Produce", icon: "🥕", iconBg: "#EAF2E3", items: [
-    { text: "4 large organic yellow onions", meals: [1,2,4,5] },
-    { text: "3 large organic leeks", meals: [3] },
-    { text: "2 heads organic garlic", meals: [1,2,3,4,5] },
-    { text: "3 organic carrots", meals: [1] },
-    { text: "2 organic turnips", meals: [1] },
-    { text: "2 medium organic sweet potatoes", meals: [4] },
-    { text: "1 medium head organic cauliflower", meals: [4] },
-    { text: "½ head organic green cabbage", meals: [2] },
-    { text: "2 cups organic lacinato kale", meals: [4] },
-    { text: "Organic fresh ginger (1 knob)", meals: [2,4] },
-    { text: "5 organic green onions", meals: [2,4] },
-    { text: "2 organic lemons", meals: [1,3] },
-    { text: "Fresh organic cilantro (1 bunch)", meals: [1] },
-    { text: "Fresh organic thyme (1 bunch)", meals: [3] },
-    { text: "Fresh organic parsley (1 bunch)", meals: [5] },
-    { text: "Fresh organic basil (1 bunch)", meals: [5] }
+    { text: "1 large organic fennel bulb", meals: [1] },
+    { text: "1.5 lbs organic Yukon Gold potatoes", meals: [1] },
+    { text: "2 organic navel oranges", meals: [2] },
+    { text: "Fresh organic parsley (1 bunch)", meals: [2,3] },
+    { text: "3 large organic yellow onions", meals: [3,5] },
+    { text: "8 organic carrots", meals: [3,5] },
+    { text: "4 stalks organic celery", meals: [3] },
+    { text: "1 medium organic celery root (celeriac), peeled and cubed", meals: [3] },
+    { text: "2 cups chopped organic lacinato kale", meals: [3] },
+    { text: "1 large head organic broccoli", meals: [4] },
+    { text: "1 organic red bell pepper", meals: [4] },
+    { text: "6 organic green onions / scallions", meals: [4] },
+    { text: "Fresh organic ginger (1 knob)", meals: [4] },
+    { text: "3 organic parsnips", meals: [5] },
+    { text: "1 organic turnip", meals: [5] },
+    { text: "4 medium organic red beets (about 1 lb)", meals: [6] },
+    { text: "Fresh organic dill (1 bunch)", meals: [6] },
+    { text: "3 organic lemons", meals: [1,2,4,6] },
+    { text: "2 heads organic garlic", meals: [1,2,3,4,5] }
   ]},
   { category: "Pantry & Dry Goods", icon: "🫙", iconBg: "#FFF5E6", items: [
-    { text: "1 can (15 oz) organic chickpeas", meals: [1] },
-    { text: "2 cans (28 oz each) San Marzano tomatoes", meals: [5] },
-    { text: "Organic tomato paste (small tube)", meals: [5] },
-    { text: "Organic couscous", meals: [1] },
-    { text: "1 cup organic coarse polenta or grits", meals: [3] },
-    { text: "Organic jasmine or short-grain rice", meals: [2,4] },
-    { text: "1 lb organic pasta (rigatoni or pappardelle)", meals: [5] },
-    { text: "½ cup organic Italian breadcrumbs", meals: [5] },
-    { text: "Coconut aminos (check stock)", meals: [2,4] },
-    { text: "Rice vinegar", meals: [2] },
-    { text: "Gochujang (Korean chili paste)", meals: [4] },
-    { text: "1 preserved lemon (or use fresh)", meals: [1] },
-    { text: "½ cup green olives (Castelvetrano), pitted", meals: [1] },
-    { text: "Ground cumin", meals: [1] },
-    { text: "Ground coriander", meals: [1] },
-    { text: "Ground turmeric", meals: [1] },
-    { text: "Ground cinnamon", meals: [1] },
     { text: "Smoked paprika", meals: [1] },
-    { text: "Saffron (optional)", meals: [1] },
-    { text: "Toasted sesame oil", meals: [2,4] },
-    { text: "Toasted sesame seeds", meals: [2,4] },
-    { text: "Extra virgin olive oil (check stock)", meals: [1,2,3,4,5] },
-    { text: "Kosher salt & black pepper", meals: [1,2,3,4,5] },
-    { text: "Butcher's twine or toothpicks", meals: [5] }
+    { text: "Capers (small jar)", meals: [2] },
+    { text: "Organic tomato paste (small tube)", meals: [3,5] },
+    { text: "Dried thyme", meals: [3] },
+    { text: "2 bay leaves", meals: [3,5] },
+    { text: "Coconut aminos", meals: [4] },
+    { text: "Toasted sesame seeds", meals: [4] },
+    { text: "2 cups dry red wine (Côtes du Rhône or Cabernet)", meals: [5] },
+    { text: "1 strip organic orange peel (or use fresh orange)", meals: [5] },
+    { text: "Fresh organic thyme (small bunch)", meals: [5] },
+    { text: "Prepared horseradish", meals: [6] },
+    { text: "Extra virgin olive oil (check stock)", meals: [1,2,3,4,6] },
+    { text: "Kosher salt and black pepper", meals: [1,2,3,4,5,6] },
+    { text: "Flaky sea salt", meals: [2] }
   ]},
-  { category: "Dairy & Cheese (organic)", icon: "🧀", iconBg: "#FFF9E8", items: [
-    { text: "Organic grass-fed butter (¼ lb)", meals: [3] },
-    { text: "Organic grated Parmesan (1 cup total)", meals: [3,5] },
-    { text: "1 cup organic whole milk", meals: [3] },
-    { text: "4 organic eggs (optional, for gyudon)", meals: [2] }
+  { category: "Dairy", icon: "🧈", iconBg: "#FFF9E8", items: [
+    { text: "Organic grass-fed butter (½ lb)", meals: [2] },
+    { text: "Organic sour cream (½ cup)", meals: [6] }
   ]},
-  { category: "Wine & Liquids", icon: "🍷", iconBg: "#F5EEF8", items: [
-    { text: "1 cup dry white wine", meals: [3] },
-    { text: "½ cup dry red wine", meals: [5] },
-    { text: "2 cups organic chicken stock", meals: [1,3] },
-    { text: "1 cup organic beef stock", meals: [2] },
-    { text: "4 cups organic vegetable stock", meals: [4] }
+  { category: "Broth & Liquids", icon: "🍲", iconBg: "#EEF4FD", items: [
+    { text: "10 cups organic beef stock (two 32 oz cartons)", meals: [3,5] },
+    { text: "Organic jasmine rice", meals: [4] }
   ]}
 ];
 let checkedState={};let activeFilter='all';
-try{checkedState=JSON.parse(localStorage.getItem('he-mar1')||'{}');}catch(e){}
-function saveState(){localStorage.setItem('he-mar1',JSON.stringify(checkedState));}
+try{checkedState=JSON.parse(localStorage.getItem('he-feb22')||'{}');}catch(e){}
+function saveState(){localStorage.setItem('he-feb22',JSON.stringify(checkedState));}
 function getItemKey(c,i){return `${c}-${i}`;}
 function getMealDots(meals){return meals.map(m=>`<div class="meal-dot dot-${m}"></div>`).join('');}
 function renderList(){
