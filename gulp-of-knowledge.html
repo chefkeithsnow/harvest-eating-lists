@@ -93,21 +93,12 @@
   }
 
   .intro-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--light-rule);
     border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--light-rule);
     margin: 28px 0 0;
+    padding: 20px 0 18px;
     background: var(--white);
   }
-  .intro-text {
-    padding: 16px 24px;
-    border-right: 1px solid var(--light-rule);
-    display: flex;
-    align-items: center;
-  }
-  
   .intro-text h2 em { color: var(--rust); }
   .intro-text p {
     font-family: 'Libre Baskerville', serif;
@@ -116,15 +107,13 @@
     color: #4A3F35;
   }
   .intro-tagline {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-style: italic;
-    color: var(--rust);
-    margin: 0;
-    line-height: 1.4;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 14px;
+    color: var(--ink);
+    margin: 0 0 14px;
+    line-height: 1.7;
   }
-  .intro-stats {
-    padding: 28px;
+ 28px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -803,7 +792,7 @@
     .streak-divider { margin: 0 0.75rem; }
 
     /* ── INTRO BLOCK ── */
-    .intro-block { grid-template-columns: 1fr; }
+    /* intro-block mobile — inherits full-width */
     .intro-text { border-right: none; border-bottom: 1px solid var(--light-rule); padding: 12px 14px; }
     .intro-tagline { font-size: 13px; }
     .intro-stats {
@@ -1190,17 +1179,11 @@
 <div id="screen-home">
   <div class="page">
     <div class="intro-block">
-      <div class="intro-text">
-        <p class="intro-tagline">430 questions. 23 categories. Learn something every bite.</p>
-      </div>
-      <div class="intro-stats">
-        <div class="stat"><div class="stat-num">23</div><div class="stat-label">Categories</div></div>
-        <div class="streak-bar" id="streak-bar">
-          <div class="streak-item"><span class="streak-fire">&#x1F525;</span><span id="home-streak">0</span><span class="streak-label">day streak</span></div>
-          <div class="streak-divider"></div>
-          <div class="streak-item"><span class="streak-pts-icon">&#11088;</span><span id="home-points">0</span><span class="streak-label">total pts</span></div>
-        </div>
-        <div class="stat"><div class="stat-num">430</div><div class="stat-label">Questions</div></div>
+      <p class="intro-tagline">Gulp of Knowledge is a culinary trivia game with loads of categories and questions — from French mother sauces to Nashville hot chicken. Play daily to build your streak and unlock real valuable kitchen prizes.</p>
+      <div class="streak-bar" id="streak-bar">
+        <div class="streak-item"><span class="streak-fire">&#x1F525;</span><span id="home-streak">0</span><span class="streak-label">day streak</span></div>
+        <div class="streak-divider"></div>
+        <div class="streak-item"><span class="streak-pts-icon">&#11088;</span><span id="home-points">0</span><span class="streak-label">total pts</span></div>
       </div>
     </div>
 
